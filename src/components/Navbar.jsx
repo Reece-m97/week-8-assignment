@@ -8,7 +8,7 @@ export default function Navbar() {
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    localStorage.clear();
     router.push("/");
   };
 
