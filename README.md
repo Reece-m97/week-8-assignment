@@ -1,17 +1,14 @@
 Reflection
 
-After a lot of trail and error I managed to complete the requirements. I haven't redirected users to the posts page when submitting a post as the form is already on the posts page and updates when it is submitted. I do have it when a user is not logged in they are redirected back to the home page and when they click log out they are of course redirected back to the home page.
+This week’s assignment was both challenging and rewarding. Through trial and error, I managed to meet the requirements. While I haven't implemented redirection to the posts page after submitting a post, as the form is already on the posts page and updates dynamically. I also ensured users who are not logged in are redirected to the home page, and clicking the logout button successfully clears the session and returns them to the home page.
 
-As we were using next.js this week i checked to see about using Axios again and from some reddit posts and some comparison articles, i found it was best to use the built-in fetch and route handlers. 
-I tried to use bcrypt after briefly reading about it for my last assignment and also use json web tokens, but this caused a lot of problems. after a long day of trying to solve the issues and having a near melt down, i had to give up on the idea. However, if you are intrested in JWT i did find some good information at https://stackoverflow.com/questions/31309759/what-is-secret-key-for-jwt-based-authentication-and-how-to-generate-it you can also find a good site for generating passwords.
+As this assignment focused on Next.js, I explored using Axios but ultimately decided on the built-in fetch function and route handlers, based on recommendations from resources like Reddit and comparison articles. While I initially attempted to integrate bcrypt for password hashing and JSON Web Tokens (JWT) for authentication, I faced several issues during implementation. After extensive troubleshooting, I decided to postpone using both but found some excellent resources for future reference, including a Stack Overflow thread (https://stackoverflow.com/questions/31309759/what-is-secret-key-for-jwt-based-authentication-and-how-to-generate-it) and within the answers you can find a good site for generating secure passwords.
 
-A lot of my resources came from the building your application and API reference docs in nextjs.org. 
-Mdn web docs had some useful information on Fetch API https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API.
-A good resource for comparing data fetching methods: https://www.getfishtank.com/insights/comprehensive-guide-to-data-fetching-in-nextjs.
+Many of my resources came from the Next.js documentation, which was invaluable for building my application and APIs. Additionally, the MDN Web Docs provided clear guidance on the Fetch API (https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), and I found a comparison guide to data-fetching methods (https://www.getfishtank.com/insights/comprehensive-guide-to-data-fetching-in-nextjs).
 
-Unfortunately i still haven't got around to implementing the like feature for posts and adding notoriety points for users to go up ranks in levels. So i have put the leaderboard section on hold this time.
+Unfortunately, I didn't get to implement the like feature for posts or the leaderboard functionality, which would have allowed users to gain notoriety points and advance in ranks. For now, I’ve put these features on hold, but I hope to revisit them soon.
 
-i ran into a lot of errors this week but managed to fix them and gained a higher appreciation for the ai in the Developers tool console. it does help with understanding the problems and gives possible solutions. that came in very handy this week.
-i also got the chance to play with tailwind css and i have started to really like it, as you can directly put in the css styles, the lines do get a bit long though.
+Throughout this process, I encountered numerous errors but gained a newfound appreciation for the AI-powered suggestions in the Developer Tools console. These insights often helped me troubleshoot effectively. I also experimented with Tailwind CSS for the first time and enjoyed how it allowed me to style components directly in the markup, despite the longer class names.
 
-i'm hoping after this chaotic week, things will get a bit easier.
+In summary, this assignment was a chaotic yet rewarding experience. I’m proud of what I accomplished despite the setbacks and am excited to revisit unfinished features in the future. With the lessons learned, I hope the coming weeks will feel a bit more manageable!
+
