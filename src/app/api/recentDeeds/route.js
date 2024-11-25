@@ -3,7 +3,7 @@ import { db } from "@/utils/db";
 
 // Handle GET requests
 export async function GET(req) {
-  const { searchParams } = new URL(req.url); // Extract query parameters
+  const { searchParams } = new URL(req.url);
   const userId = searchParams.get("userId");
 
   if (!userId) {

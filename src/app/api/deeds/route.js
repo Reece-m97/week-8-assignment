@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/utils/db"; // Ensure this points to your database pool
+import { db } from "@/utils/db";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -44,7 +44,7 @@ export async function POST(request) {
       `;
     const values = [userId, description, category];
 
-    const { rows } = await pool.query(query, values);
+    const { rows } = await db.query(query, values);
     return NextResponse.json(rows[0]);
   } catch (error) {
     console.error("Error posting deed:", error);

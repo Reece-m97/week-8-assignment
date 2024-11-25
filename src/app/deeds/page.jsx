@@ -2,15 +2,27 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function DeedLogPage() {
   const [deeds, setDeeds] = useState([]);
   const [form, setForm] = useState({ description: "", category: "" });
   const [sortOrder, setSortOrder] = useState("desc");
   const [error, setError] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const router = useRouter();
 
-  const userId = 1; // Replace with the logged-in user's ID
+  // User session check
+  useEffect(() => {
+    const savedUser = JSON.parse(localStorage.getItem("villainUser"));
+    if (!savedUser) {
+      router.push("/");
+    } else {
+      setUserId(savedUser.id);
+    }
+  }, [router]);
 
+  // Fetch deeds from the API
   useEffect(() => {
     async function fetchDeeds() {
       try {
@@ -34,6 +46,11 @@ export default function DeedLogPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!userId) {
+      setError("User is not logged in.");
+      return;
+    }
+
     try {
       const res = await fetch("/api/deeds", {
         method: "POST",
@@ -46,7 +63,7 @@ export default function DeedLogPage() {
 
       // Update the deeds list to include the new deed
       setDeeds((prev) => [newDeed, ...prev]);
-      setForm({ description: "", category: "" }); // Reset the form
+      setForm({ description: "", category: "" });
     } catch (err) {
       console.error(err);
       setError("Failed to post deed.");
@@ -54,52 +71,60 @@ export default function DeedLogPage() {
   };
 
   return (
-    <div>
-      <h1>All Villainous Deeds</h1>
-      <form onSubmit={handleSubmit}>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-6">All Villainous Deeds</h1>
+      <form onSubmit={handleSubmit} className="mb-6">
         <textarea
           name="description"
           placeholder="Describe your villainous deed"
           value={form.description}
           onChange={handleChange}
           required
+          className="w-full p-2 border rounded mb-4"
         />
         <select
           name="category"
           value={form.category}
           onChange={handleChange}
           required
+          className="w-full p-2 border rounded mb-4"
         >
           <option value="">Select a category</option>
           <option value="Petty deeds">Petty deeds</option>
           <option value="Moderate mischief">Moderate mischief</option>
           <option value="Diabolical schemes">Diabolical schemes</option>
         </select>
-        <button type="submit">Submit Deed</button>
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Submit Deed
+        </button>
       </form>
 
       <button
         onClick={() =>
           setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
         }
+        className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 mb-6"
       >
-        Sort: {sortOrder === "asc" ? "Ascending" : "Descending"}
+        Sort Date: {sortOrder === "asc" ? "Ascending" : "Descending"}
       </button>
-      {error && <p>Error: {error}</p>}
-      <ul>
+
+      {error && <p className="text-red-500 mb-4">Error: {error}</p>}
+
+      <ul className="space-y-4">
         {deeds.map((deed) => (
-          <li key={deed.deed_id}>
+          <li key={deed.deed_id} className="p-4 border rounded-lg shadow">
             <Link href={`/deeds/${deed.deed_id}`}>
-              <p>
-                <strong>Villain:</strong> {deed.villain_name}
-              </p>
+              <h3 className="font-semibold">{deed.villain_name}</h3>
               <p>
                 <strong>Description:</strong> {deed.description}
               </p>
-              <p>
+              <p className="text-gray-600">
                 <strong>Category:</strong> {deed.category}
               </p>
-              <p>
+              <p className="text-sm text-gray-500">
                 <strong>Date:</strong> {new Date(deed.date).toLocaleString()}
               </p>
               <p>

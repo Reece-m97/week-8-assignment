@@ -12,9 +12,7 @@ export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-white">
       <div className="text-center">
-        <h1 className="text-5xl font-bold mb-4">
-          Welcome to the Villain Tracker
-        </h1>
+        <h1 className="text-5xl font-bold mb-4">Welcome to the Villain Hub</h1>
         <p className="text-lg mb-6">
           Ready to log your most nefarious deeds and climb the leaderboard?
         </p>

@@ -1,93 +1,87 @@
-"use client";
+import CommentForm from "@/components/CommentForm";
 
-import { useState, useEffect } from "react";
+import { db } from "@/utils/db";
+import React from "react";
 
-export default function SingleDeedPage({ params }) {
-  const [deed, setDeed] = useState(null);
-  const [comments, setComments] = useState([]);
-  const [form, setForm] = useState({ comment: "" });
+// Fetch deed data from the database
+async function fetchDeedAndComments(deedId) {
+  const deedQuery = `
+    SELECT 
+      deeds.id AS deed_id,
+      deeds.description,
+      deeds.category,
+      deeds.date,
+      users.villain_name AS villain_name,
+      COUNT(reactions.id) AS evil_laughs,
+      COUNT(comments.id) AS comments_count
+    FROM deeds
+    LEFT JOIN users ON deeds.user_id = users.id
+    LEFT JOIN reactions ON deeds.id = reactions.deed_id
+    LEFT JOIN comments ON deeds.id = comments.deed_id
+    WHERE deeds.id = $1
+    GROUP BY deeds.id, users.villain_name;
+  `;
+  const commentQuery = `
+    SELECT comments.id, comments.comment, comments.date, users.villain_name AS commenter_name
+    FROM comments
+    LEFT JOIN users ON comments.user_id = users.id
+    WHERE comments.deed_id = $1
+    ORDER BY comments.date DESC;
+  `;
 
-  useEffect(() => {
-    async function fetchDeed() {
-      const response = await fetch(`/api/deeds/${params.id}`);
-      if (response.ok) {
-        const data = await response.json();
-        setDeed(data);
-        setComments(data.comments || []);
-      } else {
-        console.error("Error fetching deed");
-      }
-    }
-    fetchDeed();
-  }, [params.id]);
+  const [deedResult, commentsResult] = await Promise.all([
+    db.query(deedQuery, [deedId]),
+    db.query(commentQuery, [deedId]),
+  ]);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const deed = deedResult.rows[0];
+  const comments = commentsResult.rows;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const response = await fetch("/api/comments", {
-      method: "POST",
-      headers: { "Comment-Type": "application/json" },
-      body: JSON.stringify({
-        deed_id: params.id,
-        user_id: 1,
-        comment: form.comment,
-      }),
-    });
-    if (response.ok) {
-      const newComment = await response.json();
-      setComments([...comments, newComment]);
-      setForm({ comment: "" });
-    } else {
-      console.error("Error submitting comment");
-    }
-  };
+  return { deed, comments };
+}
 
-  if (!deed) return <p>Loading...</p>;
+export default async function SingleDeedPage({ params }) {
+  const { id } = await params;
+
+  const { deed, comments } = await fetchDeedAndComments(id);
+
+  if (!deed) {
+    return <p>Deed not found.</p>;
+  }
 
   return (
-    <div>
-      <h1>Deed Details</h1>
-      <p>
-        <strong>Villain:</strong> {deed.villain_name}
+    <div className="p-4">
+      <h1 className="text-2xl font-bold">{deed.villain_name}&apos;s Deed</h1>
+      <p className="mt-4">
+        <strong className="font-semibold">Description:</strong>{" "}
+        {deed.description}
       </p>
-      <p>
-        <strong>Description:</strong> {deed.description}
+      <p className="text-gray-600">
+        <strong className="font-semibold">Category:</strong> {deed.category}
       </p>
-      <p>
-        <strong>Category:</strong> {deed.category}
+      <p className="text-sm text-gray-500">
+        <strong className="font-semibold">Date:</strong>{" "}
+        {new Date(deed.date).toLocaleString()}
       </p>
-      <p>
-        <strong>Date:</strong> {new Date(deed.date).toLocaleString()}
-      </p>
-      <p>
-        <strong>Evil Laughs:</strong> {deed.evil_laughs}
+      <p className="mt-4">
+        <strong className="font-semibold">Evil Laughs:</strong>{" "}
+        {deed.evil_laughs} | <strong>Comments:</strong> {deed.comments_count}
       </p>
 
-      <h2>Comments</h2>
-      <ul>
+      <h2 className="mt-6 text-xl font-bold">Comments</h2>
+      <CommentForm deedId={id} />
+      <ul className="mt-4 space-y-2">
         {comments.map((comment) => (
-          <li key={comment.comment_id}>
+          <li key={comment.id} className="p-4 border rounded-lg shadow">
             <p>
-              <strong>{comment.username}:</strong> {comment.comment}
+              <strong>{comment.commenter_name}:</strong> {comment.comment}
             </p>
-            <p>{new Date(comment.date).toLocaleString()}</p>
+            <p className="text-sm text-gray-500">
+              <em>{new Date(comment.date).toLocaleString()}</em>
+            </p>
           </li>
         ))}
       </ul>
-
-      <form onSubmit={handleSubmit}>
-        <textarea
-          name="comment"
-          placeholder="Add your comment"
-          value={form.comment}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Submit Comment</button>
-      </form>
     </div>
   );
 }

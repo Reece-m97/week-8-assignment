@@ -9,7 +9,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // Simulating a user session check
+  // User session check
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("villainUser"));
     if (!savedUser) {
